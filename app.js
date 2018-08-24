@@ -6,9 +6,9 @@ var mongoose = require('mongoose');
 
 // use session for tracking logins
 app.use(session({
-  secret: 'satan loves dingus',
-  resave: true,
-  saveUninitialized: false
+  secret: 'satan loves dingus',   // used to sign the cookie, to ensure only this app created it
+  resave: true,                   // express will save session whether it is modified or not
+  saveUninitialized: false        // blank, uninitialized sessions will not be saved
 }));
 
 // mongodb connection
