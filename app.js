@@ -11,6 +11,12 @@ app.use(session({
   saveUninitialized: false        // blank, uninitialized sessions will not be saved
 }));
 
+// make userID available in templates
+app.use(function (req, res, next) {
+  res.locals.currentUser = req.session.userId;  // response obj has a property called locals, that custom variables can be appended to
+  next();
+});
+
 // mongodb connection
 mongoose.connect('mongodb://localhost:27017/bookworm', { useNewUrlParser: true });
 var db = mongoose.connection;

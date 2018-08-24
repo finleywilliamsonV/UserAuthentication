@@ -24,6 +24,7 @@ var UserSchema = new mongoose.Schema({
     required: true
   }
 });
+
 // authenticate input against database documents
 UserSchema.statics.authenticate = function (email, password, callback) {  // add method directly to the model
   User.findOne({email: email})
