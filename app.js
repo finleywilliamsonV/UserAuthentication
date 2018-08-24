@@ -2,13 +2,23 @@ var express = require('express');
 var bodyParser = require('body-parser');
 var app = express();
 var session = require('express-session');
+var MongoStore = require('connect-mongo')(session); // call after ^
 var mongoose = require('mongoose');
+
+// mongodb connection
+mongoose.connect('mongodb://localhost:27017/bookworm', { useNewUrlParser: true });
+var db = mongoose.connection;
+// mongo error
+db.on('error', console.error.bind(console, 'connection error:'));
 
 // use session for tracking logins
 app.use(session({
   secret: 'satan loves dingus',   // used to sign the cookie, to ensure only this app created it
   resave: true,                   // express will save session whether it is modified or not
-  saveUninitialized: false        // blank, uninitialized sessions will not be saved
+  saveUninitialized: false,        // blank, uninitialized sessions will not be saved
+  store: new MongoStore({
+    mongooseConnection: db
+  })
 }));
 
 // make userID available in templates
@@ -16,12 +26,6 @@ app.use(function (req, res, next) {
   res.locals.currentUser = req.session.userId;  // response obj has a property called locals, that custom variables can be appended to
   next();
 });
-
-// mongodb connection
-mongoose.connect('mongodb://localhost:27017/bookworm', { useNewUrlParser: true });
-var db = mongoose.connection;
-// mongo error
-db.on('error', console.error.bind(console, 'connection error:'));
 
 // parse incoming requests
 app.use(bodyParser.json());
